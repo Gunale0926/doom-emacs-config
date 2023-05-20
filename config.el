@@ -6,7 +6,7 @@
 
 ;; Some functionality uses this to identify you, e.g. MPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-(setq user-full-name "Carter Cao"
+(setq user-full-name "Yang Cao"
       user-mail-address "Gunale0926@hotmail.com")
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -20,8 +20,7 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 
-(setq doom-font (font-spec :family "SF Mono" :size 16)
-      doom-unicode-font (font-spec :family "FiraCode Nerd Font" :size 16))
+(setq doom-font (font-spec :family "Liga SFMono Nerd Font" :size 14))
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -32,42 +31,52 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 ;; (setq doom-theme 'doom-xcode)
-(setq doom-theme 'dracula-pro-vanhelsing)
+;; (setq doom-theme 'dracula-pro-vanhelsing)
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+(setq! display-line-numbers-type 'relative)
+
+;;(setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
+;;(setq exec-path (append exec-path '("/Library/TeX/texbin/")))
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(after! org
+
+(use-package! org
+  :init
+  (setq org-cite-global-bibliography '("~/Documents/Org/biblib.bib"))
+  (setq org-directory "~/Documents/Org")
+  :config
   (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
-  (setq org-cite-global-bibliography '("~/Documents/Org/biblio.bib"))
-  (setq org-directory "~/Documents/Org")
-  (setq org-agenda-files (directory-files-recursively "~/Documents/Org/" "\\.org$")))
+  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$")
+  )
+(after! org
+ ))
 
 (after! org-roam
-  (setq org-roam-directory "~/Documents/Org")
-  (setq org-roam-dailies-directory "~/Documents/Org/Journals")
+  (setq org-roam-directory org-directory)
+  (setq org-roam-dailies-directory "./journals")
   (setq org-roam-capture-templates
-        '(("m" "Main" plain
+        '(("n" "Notes" plain
            "%?"
-           :if-new (file+head "Main/${id}.org"
+           :if-new (file+head "notes/${id}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
-          ("s" "Study notes" plain "%?"
-           :if-new (file+head "Study/${id}.org"
+          ("a" "Academics" plain "%?"
+           :if-new (file+head "academics/${id}.org"
                               "#+title: ${title}\n#+filetags: :${subject}:CNUHS-2023-Spring:\n")
            :immediate-finish t
            :unnarrowed t)
-          ("d" "Dev notes" plain "%?"
-           :if-new (file+head "Dev/${id}.org"
+          ("d" "Devs" plain "%?"
+           :if-new (file+head "devs/${id}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)))
+
   (use-package! org-roam-ui
     :config
     (setq org-roam-ui-sync-theme t
@@ -85,19 +94,36 @@
 (use-package! python-black
   :demand t
   :after python)
+
 (add-hook! 'python-mode-hook #'python-black-on-save-mode)
+
+
+(use-package! citar
+  :init
+  (setq citar-bibliography org-cite-global-bibliography)
+  :custom
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar))
 
 (use-package! nov
   :mode ("\\.epub\\'" . nov-mode)
   :config
-  (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
+  (setq nov-save-place-file (concat doom-cache-dir "nov-places"))
+  )
 
-(add-to-list 'load-path "~/.doom.d/plugins/")
+(use-package! zotxt
+  :init
+  (require 'org-zotxt-noter)
+  (map! :leader
+        (:prefix ("z" . "Zotxt")
+                 (:desc "insert citekey" "i" #'zotxt-citekey-insert)
+                 (:desc "open attachment" "o" #'org-zotxt-open-attachment)
+                 (:desc "open noter" "e" #'org-zotxt-noter)))
+  :hook
+  (org-mode . org-zotxt-mode))
 
-(use-package! org-modern-indent
-  :hook (org-mode . org-modern-indent-mode))
-
-(use-package org-modern
+(use-package! org-modern
   :ensure t
   :custom
   (org-modern-hide-stars nil)
@@ -110,13 +136,10 @@
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda))
 
-(add-to-list 'load-path "~/.doom.d/plugins/org-noter-plus-djvu/modules")
-(add-to-list 'load-path "~/.doom.d/plugins/org-noter-plus-djvu")
+;;(add-to-list 'load-path "~/.config/doom/plugins/")
 
-(after! org-noter
-  (setq org-noter-highlight-selected-text t))
-(require 'org-noter-pdf)
-(require 'org-noter-nov)
+;;(use-package! org-noter
+;;  (setq org-noter-highlight-selected-text t))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

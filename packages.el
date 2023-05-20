@@ -50,6 +50,6 @@
 ;(unpin! t)
 (package! org-roam-ui)
 (package! python-black)
-(package! nov)
 (package! org-modern)
-(package! modus-themes)
+(package! org-noter)
+(package! zotxt)
