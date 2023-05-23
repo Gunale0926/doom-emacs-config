@@ -51,5 +51,4 @@
 (package! org-roam-ui)
 (package! python-black)
 (package! org-modern)
-(package! org-noter)
 (package! zotxt)

@@ -30,7 +30,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
-;; (setq doom-theme 'doom-xcode)
+(setq doom-theme 'doom-xcode)
 ;; (setq doom-theme 'dracula-pro-vanhelsing)
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -43,18 +43,15 @@
 ;; change `org-directory'. It must be set before org loads!
 
 (use-package! org
-  :init
+  :config
   (setq org-cite-global-bibliography '("~/Documents/Org/biblib.bib"))
   (setq org-directory "~/Documents/Org")
-  :config
   (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-agenda-files (directory-files-recursively org-directory "\\.org$")
-  )
-(after! org
- ))
+        ))
 
 (after! org-roam
   (setq org-roam-directory org-directory)
@@ -97,7 +94,6 @@
 
 (add-hook! 'python-mode-hook #'python-black-on-save-mode)
 
-
 (use-package! citar
   :init
   (setq citar-bibliography org-cite-global-bibliography)
@@ -123,6 +119,10 @@
   :hook
   (org-mode . org-zotxt-mode))
 
+(use-package! org-noter
+  :init
+  (setq org-noter-highlight-selected-text t))
+
 (use-package! org-modern
   :ensure t
   :custom
@@ -136,10 +136,8 @@
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda))
 
-;;(add-to-list 'load-path "~/.config/doom/plugins/")
+(add-to-list 'load-path "~/.config/doom/plugins/")
 
-;;(use-package! org-noter
-;;  (setq org-noter-highlight-selected-text t))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
