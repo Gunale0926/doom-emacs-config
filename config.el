@@ -45,7 +45,8 @@
 (use-package! org
   :config
   (setq org-cite-global-bibliography '("~/Documents/Org/biblib.bib"))
-  (setq org-directory "~/Documents/Org")
+  (setq org-directory "~/Documents/Org/")
+  (setq org-attach-id-dir "~/Documents/Org/Attachments")
   (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
   (setq org-preview-latex-default-process 'dvisvgm)
@@ -57,29 +58,22 @@
   (setq org-roam-directory org-directory)
   (setq org-roam-dailies-directory "./journals")
   (setq org-roam-capture-templates
-        '(("n" "Notes" plain
+        '(("p" "page" plain
            "%?"
-           :if-new (file+head "notes/${id}.org"
+           :if-new (file+head "pages/${id}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
            :unnarrowed t)
-          ("a" "Academics" plain "%?"
-           :if-new (file+head "academics/${id}.org"
-                              "#+title: ${title}\n#+filetags: :${subject}:CNUHS-2023-Spring:\n")
-           :immediate-finish t
-           :unnarrowed t)
-          ("d" "Devs" plain "%?"
-           :if-new (file+head "devs/${id}.org"
-                              "#+title: ${title}\n")
-           :immediate-finish t
-           :unnarrowed t)))
+          ))
 
   (use-package! org-roam-ui
     :config
+    (map! :leader "n r u" #'org-roam-ui-open)
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t)))
+
 
 (setq lsp-clients-clangd-args '("-j=3"
                                 "--background-index"
@@ -122,6 +116,10 @@
 (use-package! org-noter
   :init
   (setq org-noter-highlight-selected-text t))
+
+;;(use-package! pdf-view
+;;  :hook
+;;  (pdf-view-mode . pdf-view-midnight-minor-mode))
 
 (use-package! org-modern
   :ensure t

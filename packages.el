@@ -49,6 +49,8 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 (package! org-roam-ui)
+(package! cl-lib)
 (package! python-black)
 (package! org-modern)
+(package! prettier-js)
 (package! zotxt)
