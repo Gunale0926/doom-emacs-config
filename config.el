@@ -6,10 +6,10 @@
 
 ;; Some functionality uses this to identify you, e.g. MPG configuration, email
 ;; clients, file templates and snippets. It is optional.
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 (setq user-full-name "Yang Cao"
       user-mail-address "Gunale0926@hotmail.com")
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
-;;
 ;; - `doom-font' -- the primary font to use
 ;; - `doom-variable-pitch-font' -- a non-monospace font (where applicable)
 ;; - `doom-big-font' -- used for `doom-big-font-mode'; use this for
@@ -30,7 +30,11 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
+
 (setq doom-theme 'doom-xcode)
+
+;; (use-package! nano)
+
 ;; (setq doom-theme 'dracula-pro-vanhelsing)
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
@@ -42,21 +46,40 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"
+                                "--header-insertion-decorators=0"))
+
+(defun org-babel-edit-prep:python (babel-info)
+(setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
+(lsp))
+
+(use-package! python-black
+  :demand t
+  :after python)
+
+(add-hook! 'python-mode-hook #'python-black-on-save-mode)
+
 (use-package! org
   :config
-  (setq org-cite-global-bibliography '("~/Documents/Org/biblib.bib"))
   (setq org-directory "~/Documents/Org/")
-  (setq org-attach-id-dir "~/Documents/Org/Attachments")
+  (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
+  (setq bibtex-completion-bibliography  org-cite-global-bibliography)
+  (setq org-attach-id-dir (concat org-directory "Attachments/"))
   (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
-  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$")
-        ))
+  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
+)
 
 (after! org-roam
   (setq org-roam-directory org-directory)
   (setq org-roam-dailies-directory "./journals")
+  ;;(setq org-roam-file-exclude-regexp (concat "^" (expand-file-name org-roam-directory) "logseq/"))
   (setq org-roam-capture-templates
         '(("p" "page" plain
            "%?"
@@ -74,52 +97,46 @@
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t)))
 
-
-(setq lsp-clients-clangd-args '("-j=3"
-                                "--background-index"
-                                "--clang-tidy"
-                                "--completion-style=detailed"
-                                "--header-insertion=never"
-                                "--header-insertion-decorators=0"))
-
-(use-package! python-black
-  :demand t
-  :after python)
-
-(add-hook! 'python-mode-hook #'python-black-on-save-mode)
-
 (use-package! citar
-  :init
-  (setq citar-bibliography org-cite-global-bibliography)
-  :custom
-  (org-cite-insert-processor 'citar)
-  (org-cite-follow-processor 'citar)
-  (org-cite-activate-processor 'citar))
+   :init
+   (setq citar-bibliography org-cite-global-bibliography)
+   :custom
+   (org-cite-insert-processor 'citar)
+   (org-cite-follow-processor 'citar)
+   (org-cite-activate-processor 'citar))
+
+(use-package! citar-org-roam
+   :after (citar org-roam)
+   :config
+   (citar-org-roam-mode)
+   (setq citar-org-roam-note-title-template "${title}"))
+
+;; (use-package! zotxt
+;;  :init
+;;  (require 'org-zotxt-noter)
+;;  (map! :leader
+;;        (:prefix ("z" . "Zotxt")
+;;                 (:desc "insert citekey" "i" #'zotxt-citekey-insert)
+;;                 (:desc "open attachment" "o" #'org-zotxt-open-attachment)
+;;                 (:desc "open noter" "e" #'org-zotxt-noter)))
+;;  :hook
+;;  (org-mode . org-zotxt-mode))
 
 (use-package! nov
   :mode ("\\.epub\\'" . nov-mode)
   :config
-  (setq nov-save-place-file (concat doom-cache-dir "nov-places"))
-  )
-
-(use-package! zotxt
-  :init
-  (require 'org-zotxt-noter)
-  (map! :leader
-        (:prefix ("z" . "Zotxt")
-                 (:desc "insert citekey" "i" #'zotxt-citekey-insert)
-                 (:desc "open attachment" "o" #'org-zotxt-open-attachment)
-                 (:desc "open noter" "e" #'org-zotxt-noter)))
-  :hook
-  (org-mode . org-zotxt-mode))
+  (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
 
 (use-package! org-noter
-  :init
-  (setq org-noter-highlight-selected-text t))
+  :config
+  (setq org-noter-highlight-selected-text t)
+)
 
-;;(use-package! pdf-view
-;;  :hook
-;;  (pdf-view-mode . pdf-view-midnight-minor-mode))
+(use-package! pdf-view
+  :config
+  (setq rectangle-mark-mode t)
+  :hook
+  (pdf-view-mode . pdf-view-midnight-minor-mode))
 
 (use-package! org-modern
   :ensure t
@@ -136,6 +153,8 @@
 
 (add-to-list 'load-path "~/.config/doom/plugins/")
 
+(use-package! org-mac-link
+  :after org)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
