@@ -153,8 +153,8 @@
 
 (add-to-list 'load-path "~/.config/doom/plugins/")
 
-(use-package! org-mac-link
-  :after org)
+;;(use-package! org-mac-link
+;;  :after org)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

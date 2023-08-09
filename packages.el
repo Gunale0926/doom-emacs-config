@@ -51,6 +51,7 @@
 (package! org-noter :recipe (:repo "org-noter/org-noter"))
 (unpin! org-noter)
 (unpin! org-roam)
+(package! org :pin "ca873f7")
 (package! org-roam-ui)
 (package! python-black)
 (package! org-modern)
