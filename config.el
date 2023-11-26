@@ -54,12 +54,17 @@
                                 "--header-insertion-decorators=0"))
 
 (defun org-babel-edit-prep:python (babel-info)
-(setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
-(lsp))
+  (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
+  (lsp))
 
 (use-package! python-black
   :demand t
   :after python)
+
+(use-package! conda
+  :custom
+  (conda-env-autoactivate-mode 1)
+  )
 
 (add-hook! 'python-mode-hook #'python-black-on-save-mode)
 
@@ -74,7 +79,7 @@
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
-)
+  )
 
 (after! org-roam
   (setq org-roam-directory org-directory)
@@ -98,18 +103,18 @@
           org-roam-ui-open-on-start t)))
 
 (use-package! citar
-   :init
-   (setq citar-bibliography org-cite-global-bibliography)
-   :custom
-   (org-cite-insert-processor 'citar)
-   (org-cite-follow-processor 'citar)
-   (org-cite-activate-processor 'citar))
+  :init
+  (setq citar-bibliography org-cite-global-bibliography)
+  :custom
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar))
 
 (use-package! citar-org-roam
-   :after (citar org-roam)
-   :config
-   (citar-org-roam-mode)
-   (setq citar-org-roam-note-title-template "${title}"))
+  :after (citar org-roam)
+  :config
+  (citar-org-roam-mode)
+  (setq citar-org-roam-note-title-template "${title}"))
 
 ;; (use-package! zotxt
 ;;  :init
@@ -130,7 +135,7 @@
 (use-package! org-noter
   :config
   (setq org-noter-highlight-selected-text t)
-)
+  )
 
 (use-package! pdf-view
   :config
@@ -140,16 +145,41 @@
 
 (use-package! org-modern
   :ensure t
+  :config
+  (setq
+   ;; Edit settings
+   org-auto-align-tags nil
+   org-tags-column 0
+   org-fold-catch-invisible-edits 'show-and-error
+   org-special-ctrl-a/e t
+   org-insert-heading-respect-content t
+
+   ;; Org styling, hide markup etc.
+   org-hide-emphasis-markers t
+   org-pretty-entities t
+   org-ellipsis "…"
+
+   ;; Agenda styling
+   org-agenda-tags-column 0
+   org-agenda-block-separator ?─
+   org-agenda-time-grid
+   '((daily today require-timed)
+     (800 1000 1200 1400 1600 1800 2000)
+     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+   org-agenda-current-time-string
+   "◀── now ─────────────────────────────────────────────────")
+
+  (global-org-modern-mode)
+  )
+
+(use-package! vertico
+  :config (vertico-posframe-mode 1)
+  )
+
+(use-package! treemacs
   :custom
-  (org-modern-hide-stars nil)
-  (org-modern-table nil)
-  (org-modern-list
-   '((?- . "-")
-     (?* . "•")
-     (?+ . "‣")))
-  :hook
-  (org-mode . org-modern-mode)
-  (org-agenda-finalize . org-modern-agenda))
+  (lsp-treemacs-sync-mode 1)
+  )
 
 (add-to-list 'load-path "~/.config/doom/plugins/")
 
