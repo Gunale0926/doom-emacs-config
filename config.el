@@ -45,6 +45,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
+(setq byte-compile-warnings '(cl-functions))
 
 (setq lsp-clients-clangd-args '("-j=3"
                                 "--background-index"
@@ -68,8 +69,17 @@
 
 (add-hook! 'python-mode-hook #'python-black-on-save-mode)
 
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
 (use-package! org
   :config
+  (setq org-attach-store-link-p 'attached)
   (setq org-directory "~/Documents/Org/")
   (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
   (setq bibtex-completion-bibliography  org-cite-global-bibliography)
@@ -91,7 +101,7 @@
            :if-new (file+head "pages/${id}.org"
                               "#+title: ${title}\n")
            :immediate-finish t
-           :unnarrowed t)
+           :unnarrowed f)
           ))
 
   (use-package! org-roam-ui
@@ -144,33 +154,25 @@
   (pdf-view-mode . pdf-view-midnight-minor-mode))
 
 (use-package! org-modern
-  :ensure t
+  :hook (org-mode . org-modern-mode)
   :config
   (setq
    ;; Edit settings
-   org-auto-align-tags nil
-   org-tags-column 0
    org-fold-catch-invisible-edits 'show-and-error
    org-special-ctrl-a/e t
    org-insert-heading-respect-content t
+   ;; Appearance
+   org-modern-hide-stars "·"
+   org-modern-star ["⁖"]
+   org-modern-keyword t
+   ))
 
-   ;; Org styling, hide markup etc.
-   org-hide-emphasis-markers t
-   org-pretty-entities t
-   org-ellipsis "…"
-
-   ;; Agenda styling
-   org-agenda-tags-column 0
-   org-agenda-block-separator ?─
-   org-agenda-time-grid
-   '((daily today require-timed)
-     (800 1000 1200 1400 1600 1800 2000)
-     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
-   org-agenda-current-time-string
-   "◀── now ─────────────────────────────────────────────────")
-
-  (global-org-modern-mode)
-  )
+(use-package! org-appear
+  :hook
+  (org-mode . org-appear-mode)
+  :config
+  (setq org-hide-emphasis-markers t
+        org-appear-autolinks t))
 
 (use-package! vertico
   :config (vertico-posframe-mode 1)
