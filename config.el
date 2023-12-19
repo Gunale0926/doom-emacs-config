@@ -45,7 +45,6 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq byte-compile-warnings '(cl-functions))
 
 (setq lsp-clients-clangd-args '("-j=3"
                                 "--background-index"
@@ -94,12 +93,18 @@
 (after! org-roam
   (setq org-roam-directory org-directory)
   (setq org-roam-dailies-directory "./journals")
-  ;;(setq org-roam-file-exclude-regexp (concat "^" (expand-file-name org-roam-directory) "logseq/"))
+  (setq org-roam-file-exclude-regexp (concat "^" (expand-file-name org-roam-directory) "logseq/"))
   (setq org-roam-capture-templates
         '(("p" "page" plain
            "%?"
            :if-new (file+head "pages/${id}.org"
                               "#+title: ${title}\n")
+           :immediate-finish t
+           :unnarrowed f)
+          ("r" "reference" plain
+           "%?"
+           :if-new (file+head "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/refs/${citar-citekey}.org"
+                              "#+title: ${note-title}\n\n")
            :immediate-finish t
            :unnarrowed f)
           ))
@@ -115,6 +120,7 @@
 (use-package! citar
   :init
   (setq citar-bibliography org-cite-global-bibliography)
+  (setq citar-notes-paths (list org-directory))
   :custom
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
@@ -124,7 +130,8 @@
   :after (citar org-roam)
   :config
   (citar-org-roam-mode)
-  (setq citar-org-roam-note-title-template "${title}"))
+  (setq citar-org-roam-note-title-template "${title}")
+  (setq citar-org-roam-capture-template-key "r"))
 
 ;; (use-package! zotxt
 ;;  :init
