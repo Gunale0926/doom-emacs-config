@@ -53,9 +53,11 @@
 (unpin! org-tree-slide)
 (package! vertico-posframe)
 (package! org-roam-ui)
+(package! consult-org-roam)
 (package! python-black)
 (package! org-modern)
 (unpin! org-modern)
+(unpin! citar)
 (package! org-appear)
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))

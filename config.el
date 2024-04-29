@@ -63,7 +63,11 @@
 
 (use-package! conda
   :custom
-  (conda-env-autoactivate-mode 1)
+  (conda-env-initialize-interactive-shells)
+  (conda-env-initialize-eshell)
+  (conda-env-autoactivate-mode t)
+  (add-to-hook 'find-file-hook (lambda () (when (bound-and-true-p conda-project-env-path)
+                                            (conda-env-activate-for-buffer))))
   )
 
 (add-hook! 'python-mode-hook #'python-black-on-save-mode)
@@ -83,11 +87,22 @@
   (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
   (setq bibtex-completion-bibliography  org-cite-global-bibliography)
   (setq org-attach-id-dir (concat org-directory "Attachments/"))
-  (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f" "xelatex -interaction nonstopmode %f"))
+  ;;(setq org-latex-pdf-process '("xelatex -interaction -shell-escape nonstopmode %f" "xelatex -interaction nonstopmode -shell-escape %f"))
+  (setq org-latex-pdf-process
+        (let
+            ((cmd (concat "xelatex -shell-escape -interaction nonstopmode"
+                          " --synctex=1"
+                          " -output-directory %o %f")))
+          (list cmd
+                "cd %o; if test -r %b.idx; then makeindex %b.idx; fi"
+                "cd %o; bibtex %b"
+                cmd
+                cmd)))
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
-  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
+  (setq org-latex-prefer-user-labels t)
+  ;; (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
   )
 
 (after! org-roam
@@ -115,7 +130,10 @@
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t)))
+          org-roam-ui-open-on-start t))
+  (use-package! consult-org-roam
+    :config
+    (map! :leader "n r c" #'consult-org-roam-search)))
 
 (use-package! citar
   :init
@@ -191,9 +209,6 @@
   )
 
 (add-to-list 'load-path "~/.config/doom/plugins/")
-
-;;(use-package! org-mac-link
-;;  :after org)
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
