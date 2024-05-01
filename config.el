@@ -122,6 +122,13 @@
                               "#+title: ${note-title}\n\n")
            :immediate-finish t
            :unnarrowed f)
+          ("m" "mla" plain
+           "%?"
+           :if-new (file+head "pages/${id}.org"
+                              "#+title: ${title}\n#+LATEX_HEADER: \\usepackage{mla13}\n#+LATEX_HEADER: \\firstname{Yang}\n#+LATEX_HEADER: \\lastname{Cao}\n#+LATEX_HEADER: \\professor{${prof}}\n#+LATEX_HEADER: \\class{${class}}\n#+LATEX_HEADER: \\title{${title}}\n\\makeheader")
+
+           :immediate-finish t
+           :unnarrowed f)
           ))
 
   (use-package! org-roam-ui
