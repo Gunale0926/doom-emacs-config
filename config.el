@@ -85,6 +85,7 @@
   (setq org-attach-store-link-p 'attached)
   (setq org-directory "~/Documents/Org/")
   (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
+  ;; (setq org-cite-global-bibliography '("~/Library/Mobile Documents/iCloud~com~sonnysoftware~bot/Documents/CS.bib"))
   (setq bibtex-completion-bibliography  org-cite-global-bibliography)
   (setq org-attach-id-dir (concat org-directory "Attachments/"))
   ;;(setq org-latex-pdf-process '("xelatex -interaction -shell-escape nonstopmode %f" "xelatex -interaction nonstopmode -shell-escape %f"))
@@ -98,11 +99,11 @@
                 "cd %o; bibtex %b"
                 cmd
                 cmd)))
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+  ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-latex-prefer-user-labels t)
-  ;; (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
+  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
   )
 
 (after! org-roam
@@ -122,10 +123,16 @@
                               "#+title: ${note-title}\n\n")
            :immediate-finish t
            :unnarrowed f)
+          ("a" "SemAI" plain
+           "%?"
+           :if-new (file+head "semai/${id}.org"
+                              "#+title: ${note-title}\n\n")
+           :immediate-finish t
+           :unnarrowed f)
           ("m" "mla" plain
            "%?"
            :if-new (file+head "pages/${id}.org"
-                              "#+title: ${title}\n#+LATEX_HEADER: \\usepackage{mla13}\n#+LATEX_HEADER: \\firstname{Yang}\n#+LATEX_HEADER: \\lastname{Cao}\n#+LATEX_HEADER: \\professor{${prof}}\n#+LATEX_HEADER: \\class{${class}}\n#+LATEX_HEADER: \\title{${title}}\n\\makeheader")
+                              "#+title: ${title}\n#+OPTIONS: author:nil date:nil toc:nil title:nil\nCITE_EXPORT: csl ~/Zotero/styles/modern-language-association.csl\n#+LATEX_HEADER: \\usepackage{mla13}\n#+LATEX_HEADER: \\firstname{Yang}\n#+LATEX_HEADER: \\lastname{Cao}\n#+LATEX_HEADER: \\professor{${prof}}\n#+LATEX_HEADER: \\class{${class}}\n#+LATEX_HEADER: \\title{${title}}\n\\makeheader")
 
            :immediate-finish t
            :unnarrowed f)
