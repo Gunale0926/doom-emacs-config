@@ -46,31 +46,11 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 
-(setq lsp-clients-clangd-args '("-j=3"
-                                "--background-index"
-                                "--clang-tidy"
-                                "--completion-style=detailed"
-                                "--header-insertion=never"
-                                "--header-insertion-decorators=0"))
-
-(defun org-babel-edit-prep:python (babel-info)
-  (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
-  (lsp))
-
-(use-package! python-black
-  :demand t
-  :after python)
-
-(use-package! conda
-  :custom
-  (conda-env-initialize-interactive-shells)
+(use-package! eshell
+  :config
   (conda-env-initialize-eshell)
-  (conda-env-autoactivate-mode t)
-  (add-to-hook 'find-file-hook (lambda () (when (bound-and-true-p conda-project-env-path)
-                                            (conda-env-activate-for-buffer))))
-  )
+  (conda-env-initialize-interactive-shells))
 
-(add-hook! 'python-mode-hook #'python-black-on-save-mode)
 
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
@@ -78,17 +58,50 @@
               ("<tab>" . 'copilot-accept-completion)
               ("TAB" . 'copilot-accept-completion)
               ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-n" . 'copilot-next-completion)
+              ("C-p" . 'copilot-previous-completion))
 
+  :config
+  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+  (add-to-list 'copilot-indentation-alist '(org-mode 2))
+  (add-to-list 'copilot-indentation-alist '(text-mode 2))
+  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
+  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
+
+(use-package! vertico
+  :config (vertico-posframe-mode 1))
+
+
+;; (use-package! minimap
+;;   :config
+;;   (minimap-mode 1))
+
+;;Cpp
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"
+                                "--header-insertion-decorators=0"))
+;;Python
+(use-package! python-black
+  :demand t
+  :after python)
+(add-hook! 'python-mode-hook #'python-black-on-save-mode)
+
+(use-package! conda
+  :config
+  (setq conda-env-autoactivate-mode t))
+
+;; Org-Mode
 (use-package! org
   :config
   (setq org-attach-store-link-p 'attached)
   (setq org-directory "~/Documents/Org/")
   (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
-  ;; (setq org-cite-global-bibliography '("~/Library/Mobile Documents/iCloud~com~sonnysoftware~bot/Documents/CS.bib"))
   (setq bibtex-completion-bibliography  org-cite-global-bibliography)
   (setq org-attach-id-dir (concat org-directory "Attachments/"))
-  ;;(setq org-latex-pdf-process '("xelatex -interaction -shell-escape nonstopmode %f" "xelatex -interaction nonstopmode -shell-escape %f"))
   (setq org-latex-pdf-process
         (let
             ((cmd (concat "xelatex -shell-escape -interaction nonstopmode"
@@ -99,12 +112,16 @@
                 "cd %o; bibtex %b"
                 cmd
                 cmd)))
-  ;; (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.0))
   (setq org-preview-latex-default-process 'dvisvgm)
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2))
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-latex-prefer-user-labels t)
   (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
   )
+
+(defun org-babel-edit-prep:python (babel-info)
+  (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
+  (lsp))
 
 (after! org-roam
   (setq org-roam-directory org-directory)
@@ -176,15 +193,14 @@
 ;;  :hook
 ;;  (org-mode . org-zotxt-mode))
 
-(use-package! nov
-  :mode ("\\.epub\\'" . nov-mode)
-  :config
-  (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
+;; (use-package! nov
+;;   :mode ("\\.epub\\'" . nov-mode)
+;;   :config
+;;   (setq nov-save-place-file (concat doom-cache-dir "nov-places")))
 
 (use-package! org-noter
   :config
-  (setq org-noter-highlight-selected-text t)
-  )
+  (setq org-noter-highlight-selected-text t))
 
 (use-package! pdf-view
   :config
@@ -194,6 +210,7 @@
 
 (use-package! org-modern
   :hook (org-mode . org-modern-mode)
+  :hook (org-mode . +org-pretty-mode)
   :config
   (setq
    ;; Edit settings
@@ -204,6 +221,7 @@
    org-modern-hide-stars "·"
    org-modern-star ["⁖"]
    org-modern-keyword t
+   +org-pretty-mode t
    ))
 
 (use-package! org-appear
@@ -213,16 +231,8 @@
   (setq org-hide-emphasis-markers t
         org-appear-autolinks t))
 
-(use-package! vertico
-  :config (vertico-posframe-mode 1)
-  )
 
-(use-package! treemacs
-  :custom
-  (lsp-treemacs-sync-mode 1)
-  )
-
-(add-to-list 'load-path "~/.config/doom/plugins/")
+;; (add-to-list 'load-path "~/.config/doom/plugins/")
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.

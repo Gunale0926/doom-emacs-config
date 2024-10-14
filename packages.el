@@ -48,17 +48,23 @@
                                         ;(unpin! pinned-package another-pinned-package)
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
                                         ;(unpin! t)
+(unpin! treemacs)
+
 (package! org-noter :recipe (:repo "org-noter/org-noter"))
 (unpin! org-noter)
 (unpin! org-tree-slide)
 (package! vertico-posframe)
 (package! org-roam-ui)
 (package! consult-org-roam)
-(package! python-black)
 (package! org-modern)
 (unpin! org-modern)
-(unpin! citar)
 (package! org-appear)
+(unpin! citar)
+
+(package! python-black)
+
 (package! copilot
-  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+  :recipe (:host github :repo "copilot-emacs/copilot.el" :files ("*.el")))
+
+(unpin! treemacs)
 ;;(package! zotxt)
