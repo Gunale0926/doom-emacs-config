@@ -31,7 +31,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-(setq doom-theme 'doom-xcode)
+(setq doom-theme 'modus-vivendi-deuteranopia)
 
 ;; (use-package! nano)
 
@@ -72,6 +72,10 @@
 (use-package! vertico
   :config (vertico-posframe-mode 1))
 
+(use-package! treemacs
+  :config
+  (setq treemacs-show-hidden-files t)
+  (setq treemacs-is-never-other-window nil))
 
 ;; (use-package! minimap
 ;;   :config
@@ -102,18 +106,18 @@
   (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
   (setq bibtex-completion-bibliography  org-cite-global-bibliography)
   (setq org-attach-id-dir (concat org-directory "Attachments/"))
-  (setq org-latex-pdf-process
-        (let
-            ((cmd (concat "xelatex -shell-escape -interaction nonstopmode"
-                          " --synctex=1"
-                          " -output-directory %o %f")))
-          (list cmd
-                "cd %o; if test -r %b.idx; then makeindex %b.idx; fi"
-                "cd %o; bibtex %b"
-                cmd
-                cmd)))
   (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2))
+  (setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
+  (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
+  (setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
+  (with-eval-after-load 'ox-latex
+    (let ((article-class (assoc "article" org-latex-classes)))
+      (when article-class
+        (setf (nth 1 article-class)
+              (concat (nth 1 article-class)
+                      "\n\\input{~/works/latex/math_commands/math_commands.tex}")))))
+
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-latex-prefer-user-labels t)
   (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
@@ -230,7 +234,6 @@
   :config
   (setq org-hide-emphasis-markers t
         org-appear-autolinks t))
-
 
 ;; (add-to-list 'load-path "~/.config/doom/plugins/")
 
