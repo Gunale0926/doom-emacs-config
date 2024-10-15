@@ -31,7 +31,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 
-(setq doom-theme 'modus-vivendi-deuteranopia)
+(setq doom-theme 'modus-vivendi)
 
 ;; (use-package! nano)
 
@@ -106,22 +106,54 @@
   (setq org-cite-global-bibliography '("~/Documents/References/biblib.bib"))
   (setq bibtex-completion-bibliography  org-cite-global-bibliography)
   (setq org-attach-id-dir (concat org-directory "Attachments/"))
-  (setq org-preview-latex-default-process 'dvisvgm)
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 2))
   (setq org-format-latex-options (plist-put org-format-latex-options :foreground "White"))
   (setq org-format-latex-options (plist-put org-format-latex-options :background "Transparent"))
-  (setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
-  (with-eval-after-load 'ox-latex
-    (let ((article-class (assoc "article" org-latex-classes)))
-      (when article-class
-        (setf (nth 1 article-class)
-              (concat (nth 1 article-class)
-                      "\n\\input{~/works/latex/math_commands/math_commands.tex}")))))
+  (setq org-preview-latex-default-process 'dvisvgm)
+  (setq org-preview-latex-process-alist
+        '((dvisvgm :programs
+           ("latex" "dvisvgm")
+           :description "dvi > svg" :message "you need to install the programs: latex and dvisvgm."
+           :image-input-type "dvi"
+           :image-output-type "svg"
+           :image-size-adjus (1.7 . 1.5)
+           :latex-compiler
+           ("latex -interaction nonstopmode -output-directory %o %f")
+           :image-converter
+           ("dvisvgm %f --clipjoin --no-fonts --exact-bbox --page=1- --scale=%S --output=%O"))))
+  ;; '((inkscape :programs
+  ;;    ("pdflatex" "inkscape")
+  ;;    :description "pdf > svg" :message "you need to install the programs: pdflatex and inkscape."
+  ;;    :image-input-type "pdf"
+  ;;    :image-output-type "svg"
+  ;;    :image-size-adjust (1.7 . 1.5)
+  ;;    :latex-compiler
+  ;;    ("pdflatex -interaction nonstopmode -output-directory %o %f")
+  ;;    :image-converter
+  ;;    ("inkscape %f --export-area-drawing - --export-page=all --export-filename=%O"))))
 
+  ;;(setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
+  (setq org-format-latex-header "\\documentclass[dvisvgm]{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}")
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-latex-prefer-user-labels t)
-  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$"))
-  )
+  (setq org-startup-with-latex-preview t)
+
+  (setq org-agenda-files (directory-files-recursively org-directory "\\.org$")))
+
+(use-package! ox-latex
+  :config
+  (setq org-latex-classes
+        (mapcar (lambda (class)
+                  (if (equal (car class) "article")
+                      '("article"
+                        "\\documentclass[11pt]{article}\n\\input{~/works/latex/math_commands/math_commands.tex}"
+                        ("\\section{%s}" . "\\section*{%s}")
+                        ("\\subsection{%s}" . "\\subsection*{%s}")
+                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                    class))
+                org-latex-classes)))
 
 (defun org-babel-edit-prep:python (babel-info)
   (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
@@ -213,20 +245,34 @@
   (pdf-view-mode . pdf-view-midnight-minor-mode))
 
 (use-package! org-modern
-  :hook (org-mode . org-modern-mode)
-  :hook (org-mode . +org-pretty-mode)
+  :hook (org-mode . global-org-modern-mode)
+  :hook (org-mode . org-fragtog-mode)
   :config
   (setq
    ;; Edit settings
+   org-auto-align-tags nil
+   org-tags-column 0
    org-fold-catch-invisible-edits 'show-and-error
    org-special-ctrl-a/e t
    org-insert-heading-respect-content t
-   ;; Appearance
-   org-modern-hide-stars "·"
-   org-modern-star ["⁖"]
-   org-modern-keyword t
-   +org-pretty-mode t
-   ))
+
+   ;; Org styling, hide markup etc.
+   org-hide-emphasis-markers t
+   org-pretty-entities t
+
+   ;; Agenda styling
+   org-agenda-tags-column 0
+   org-agenda-block-separator ?─
+   org-agenda-time-grid
+   '((daily today require-timed)
+     (800 1000 1200 1400 1600 1800 2000)
+     " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+   org-agenda-current-time-string
+   "◀── now ─────────────────────────────────────────────────")
+
+  ;; Ellipsis styling
+  (setq org-ellipsis "…")
+  (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil))
 
 (use-package! org-appear
   :hook

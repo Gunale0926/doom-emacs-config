@@ -54,11 +54,13 @@
 (unpin! org-noter)
 (unpin! org-tree-slide)
 (package! vertico-posframe)
+(package! org-fragtog)
 (package! org-roam-ui)
 (package! consult-org-roam)
 (package! org-modern)
 (unpin! org-modern)
 (package! org-appear)
+(unpin! org-appear)
 (unpin! citar)
 
 (package! python-black)
