@@ -135,7 +135,7 @@
   ;;    ("inkscape %f --export-area-drawing - --export-page=all --export-filename=%O"))))
 
   ;;(setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
-  (setq org-format-latex-header "\\documentclass[dvisvgm]{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}")
+  (setq org-format-latex-header "\\documentclass[dvisvgm]{article}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\pagestyle{empty}")
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-latex-prefer-user-labels t)
   (setq org-startup-with-latex-preview t)
@@ -144,18 +144,21 @@
 
 (use-package! ox-latex
   :config
-  (setq org-latex-classes
-        (mapcar (lambda (class)
-                  (if (equal (car class) "article")
-                      '("article"
-                        "\\documentclass[11pt]{article}\n\\input{~/works/latex/math_commands/math_commands.tex}"
-                        ("\\section{%s}" . "\\section*{%s}")
-                        ("\\subsection{%s}" . "\\subsection*{%s}")
-                        ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                        ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                        ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                    class))
-                org-latex-classes)))
+  (setq
+   ;; org-latex-packages-alist '(("" "xcolor" t))
+   org-latex-classes
+   (mapcar (lambda (class)
+             (if (equal (car class) "article")
+                 '("article"
+                   "\\documentclass[11pt]{article}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\input{~/works/latex/math_commands/math_commands.tex}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+               class))
+           org-latex-classes))
+  )
 
 (defun org-babel-edit-prep:python (babel-info)
   (setq-local buffer-file-name (->> babel-info caddr (alist-get :tangle)))
@@ -252,15 +255,21 @@
   :config
   (setq
    ;; Edit settings
-   org-auto-align-tags nil
+   org-auto-align-tags t
    org-tags-column 0
    org-fold-catch-invisible-edits 'show-and-error
    org-special-ctrl-a/e t
-   org-insert-heading-respect-content t
+   ;; org-insert-heading-respect-content t
 
    ;; Org styling, hide markup etc.
    org-hide-emphasis-markers t
    org-pretty-entities t
+
+   ;; Appearance
+   org-modern-hide-stars "·"
+   org-modern-star ["⁖"]
+   org-modern-keyword t
+   +org-pretty-mode t
 
    ;; Agenda styling
    org-agenda-tags-column 0

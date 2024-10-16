@@ -1,0 +1,13 @@
+#+title: Doom Emacs Config
+
+* My Personal Doom Emacs config.
+#+begin_quote
+Note: This config is ONLY tested and WILL ONLY WORK on my machine!
+If you want to use it, MAKE SURE YOU UNDERSTAND what I have written!
+#+end_quote
+
+I tuned my emacs for LaTeX writing in Org-Mode in the following aspect:
++ Org-Mode LaTeX preview
++ Org-Mode LaTeX export
++ Org-Mode TiKZ preview
++ Org-Mode LaTeX citation
