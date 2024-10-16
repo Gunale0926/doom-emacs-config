@@ -1,9 +1,11 @@
-#+title: Doom Emacs Config
+#+title: My Doom Emacs Config
 
-* My Personal Doom Emacs config.
 #+begin_quote
 Note: This config is ONLY tested and WILL ONLY WORK on my machine!
+
 If you want to use it, MAKE SURE YOU UNDERSTAND what I have written!
+
+You need to edit ALL paths in `config.el` in order to let the config works.
 #+end_quote
 
 I tuned my emacs for LaTeX writing in Org-Mode in the following aspect:
