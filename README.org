@@ -13,3 +13,13 @@ I tuned my emacs for LaTeX writing in Org-Mode in the following aspect:
 + Org-Mode LaTeX export
 + Org-Mode TiKZ preview
 + Org-Mode LaTeX citation
+
+This config is highly intergrated with [[https://github.com/Gunale0926/math_commands][math_commands.tex]].
+
+Make sure you have cloned it first!
+
+* My Machine Details:
+- Emacs: [[https://github.com/railwaycat/homebrew-emacsmacport][Emacs Mac Port]] 29.4 with native compilation
+- OS: macOS 15.1 24B5046f arm64
+- CPU: Apple M2 Pro
+- GPU: Apple M2 Pro
