@@ -123,16 +123,6 @@
            ("latex -interaction nonstopmode -output-directory %o %f")
            :image-converter
            ("dvisvgm %f --clipjoin --no-fonts --exact-bbox --page=1- --scale=%S --output=%O"))))
-  ;; '((inkscape :programs
-  ;;    ("pdflatex" "inkscape")
-  ;;    :description "pdf > svg" :message "you need to install the programs: pdflatex and inkscape."
-  ;;    :image-input-type "pdf"
-  ;;    :image-output-type "svg"
-  ;;    :image-size-adjust (1.7 . 1.5)
-  ;;    :latex-compiler
-  ;;    ("pdflatex -interaction nonstopmode -output-directory %o %f")
-  ;;    :image-converter
-  ;;    ("inkscape %f --export-area-drawing - --export-page=all --export-filename=%O"))))
 
   ;;(setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
   (setq org-format-latex-header "\\documentclass[dvisvgm]{article}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\pagestyle{empty}")
@@ -184,7 +174,7 @@
           ("a" "SemAI" plain
            "%?"
            :if-new (file+head "semai/${id}.org"
-                              "#+title: ${note-title}\n\n")
+                              "#+title: ${title}\n\n")
            :immediate-finish t
            :unnarrowed f)
           ("m" "mla" plain
@@ -259,7 +249,7 @@
    org-tags-column 0
    org-fold-catch-invisible-edits 'show-and-error
    org-special-ctrl-a/e t
-   ;; org-insert-heading-respect-content t
+   org-insert-heading-respect-content t
 
    ;; Org styling, hide markup etc.
    org-hide-emphasis-markers t
@@ -269,7 +259,7 @@
    org-modern-hide-stars "·"
    org-modern-star ["⁖"]
    org-modern-keyword t
-   +org-pretty-mode t
+   ;; +org-pretty-mode t
 
    ;; Agenda styling
    org-agenda-tags-column 0
