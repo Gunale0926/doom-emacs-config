@@ -50,6 +50,7 @@
                                         ;(unpin! t)
 (unpin! treemacs)
 
+(unpin! org-roam)
 (package! org-noter :recipe (:repo "org-noter/org-noter"))
 (unpin! org-noter)
 (unpin! org-tree-slide)

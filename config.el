@@ -20,7 +20,7 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 
-(setq doom-font (font-spec :family "Liga SFMono Nerd Font" :size 14))
+;;(setq doom-font (font-spec :family "Liga SFMono Nerd Font" :size 14))
 
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -54,22 +54,22 @@
   (conda-env-initialize-interactive-shells))
 
 
-(use-package! copilot
-  :hook (prog-mode . copilot-mode)
-  :bind (:map copilot-completion-map
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)
-              ("C-n" . 'copilot-next-completion)
-              ("C-p" . 'copilot-previous-completion))
-
-  :config
-  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
-  (add-to-list 'copilot-indentation-alist '(org-mode 2))
-  (add-to-list 'copilot-indentation-alist '(text-mode 2))
-  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
-  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
+;; (use-package! copilot
+;;  :hook (prog-mode . copilot-mode)
+;;  :bind (:map copilot-completion-map
+;;              ("<tab>" . 'copilot-accept-completion)
+;;              ("TAB" . 'copilot-accept-completion)
+;;              ("C-TAB" . 'copilot-accept-completion-by-word)
+;;              ("C-<tab>" . 'copilot-accept-completion-by-word)
+;;              ("C-n" . 'copilot-next-completion)
+;;              ("C-p" . 'copilot-previous-completion))
+;;
+;;  :config
+;;  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+;;  (add-to-list 'copilot-indentation-alist '(org-mode 2))
+;;  (add-to-list 'copilot-indentation-alist '(text-mode 2))
+;;  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
+;;  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
 
 (use-package! vertico
   :config (vertico-posframe-mode 1))
@@ -124,8 +124,8 @@
            :image-converter
            ("dvisvgm %f --clipjoin --no-fonts --exact-bbox --page=1- --scale=%S --output=%O"))))
 
-  ;;(setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
-  (setq org-format-latex-header "\\documentclass[dvisvgm]{article}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\input{~/works/latex/math_commands/math_commands.tex}\n\\pagestyle{empty}")
+  ;;(setq org-format-latex-header "\\documentclass{article}\n\\input{~/works/math_commands/math_commands.tex}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\pagestyle{empty}             % do not remove\n% The settings below are copied from fullpage.sty\n\\setlength{\\textwidth}{\\paperwidth}\n\\addtolength{\\textwidth}{-3cm}\n\\setlength{\\oddsidemargin}{1.5cm}\n\\addtolength{\\oddsidemargin}{-2.54cm}\n\\setlength{\\evensidemargin}{\\oddsidemargin}\n\\setlength{\\textheight}{\\paperheight}\n\\addtolength{\\textheight}{-\\headheight}\n\\addtolength{\\textheight}{-\\headsep}\n\\addtolength{\\textheight}{-\\footskip}\n\\addtolength{\\textheight}{-3cm}\n\\setlength{\\topmargin}{1.5cm}\n\\addtolength{\\topmargin}{-2.54cm}")
+  (setq org-format-latex-header "\\documentclass[dvisvgm]{article}\n\\usepackage[usenames]{color}\n[DEFAULT-PACKAGES]\n[PACKAGES]\n\\input{~/works/math_commands/math_commands.tex}\n\\pagestyle{empty}")
   (setq org-cite-csl-styles-dir "~/Zotero/styles")
   (setq org-latex-prefer-user-labels t)
   (setq org-startup-with-latex-preview t)
